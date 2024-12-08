@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Nemotron AI</title>
+    <style>
+        body {
+            text-align: center;
+            justify-items: center;
+            margin: 20px;
+            background-image: url('/static/bg.jpg');
+            background-position: center;
+            background-size: cover;
+            background-attachment: fixed;
+            color: rgb(0, 255, 0);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-family: 'arial';
+
+        }
+
+        label {
+            font-size: 1.5rem;
+            font-family: 'consolas';
+            padding: 7px;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        textarea {
+            font-size: 1.5rem;
+            border: 5px solid orange;
+            border-radius: 10px;
+            padding: 7px;
+            margin-top: 2rem;
+            color: blanchedalmond;
+            background-color: rgba(21, 21, 21, 0.881);
+        }
+
+        button {
+            padding: 12px;
+            font-size: 17px;
+            border: 5px solid rgb(13, 255, 0);
+            border-radius: 25px;
+            color: rgb(255, 191, 0);
+            background-color: black;
+        }
+        button:hover {
+            background-color: rgb(0, 201, 154);
+            color: black;
+            font-weight: 500;
+            border: 5px solid rgb(255, 162, 0);
+        }
+        .card{
+            background-color: rgba(0, 0, 0, 0.806);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 6rem;
+            width: 50rem;
+            justify-content: center;
+            align-items: center;
+            box-shadow: #15ff00 0px 0px 10px 5px;
+        }
+
+        #response {
+            width: 70%;
+            width: 50rem;
+            margin-top: 5rem;
+            padding: 10px;
+            border: 5px solid #ffa200;
+            border-radius: 10px;
+            background: rgba(21, 21, 21, 0.881);
+            color: white;
+            font-family: consolas;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background-color: rgba(55, 65, 56, 0.719);">
+        <div class="container-fluid" style="width: 100rem;">
+            <a class="navbar-brand" href="#">
+                <img src="/static/lama-logo.png" alt="Avatar Logo" style="width:70px;" class="rounded-pill"> Nemotron AI
+            </a>
+            <h5><a class="nav-link" href="/about">About</a></h5>
+        </div>
+    </nav>
+    <div class="row">
+        <div class="col-md-6 card" style="margin-left: -2rem;">
+            <img src="/static/lama-logo.png" alt="logo" , height="250px" , width="250px" style="margin-top: 4rem;">
+            <h1>Llama 3.1 Nemotron-70b-instruct model by Nvidia</h1>
+        </div>
+        <div class="col-md-6 card" >
+            <form id="promptForm">
+                <label for="prompt">Enter your prompt then click on generate:</label><br>  
+                <textarea id="prompt" name="prompt" rows="5" cols="50" required placeholder="Type here"></textarea><br><br>
+                <button type="submit">Generate</button>
+            </form>
+            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="response"></div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('promptForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = "Generating response...";
+
+            try {
+                const res = await fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+                const data = await res.json();
+                if (data.response) {
+                    responseDiv.innerHTML = data.response;  // Render HTML response
+                } else {
+                    responseDiv.textContent = `Error: ${data.error}`;
+                }
+            } catch (err) {
+                responseDiv.textContent = `Error: ${err.message}`;
+            }
+        });
+    </script>
+</body>
+
+</html>
